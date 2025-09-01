@@ -62,8 +62,8 @@ var Conf = struct {
 	PacketSize int
 }{
 	FastWriteDuration: time.Second * 8,
-	IdleProbeDuration: time.Second * 120,
-	IdleReplyDuration: time.Second * 128,
+	IdleProbeDuration: time.Second * 60,
+	IdleReplyDuration: time.Second * 68,
 	PacketSize:        2048,
 }
 
