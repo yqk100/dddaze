@@ -1128,24 +1128,6 @@ func OpenFile(name string) (io.ReadCloser, error) {
 	return os.Open(name)
 }
 
-// The PrettyReader struct represents a custom reader that keeps track of read bytes and prints progress.
-type PrettyReader struct {
-	E uint64    // Total number of bytes read so far
-	F uint64    // Total capacity of the input stream
-	R io.Reader // The underlying reader that this object wraps around
-}
-
-// The Read method reads data from the wrapped reader and prints progress updates.
-func (r *PrettyReader) Read(p []byte) (int, error) {
-	if r.E == 0 {
-		pretty.PrintProgress(0)
-	}
-	n, err := r.R.Read(p)
-	r.E += uint64(n)
-	pretty.PrintProgress(float64(r.E) / float64(r.F))
-	return n, err
-}
-
 // RandomReader is a simple random number generator. Note that it is not cryptographically secure, but for daze, the
 // randomness it provides is enough.
 type RandomReader struct{}
@@ -1226,12 +1208,8 @@ func LoadApnic() map[string][]*net.IPNet {
 	url := "http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
 	log.Println("main: load apnic data from", url)
 	rep := doa.Try(http.Get(url))
-	f := &ReadWriteCloser{
-		Reader: &PrettyReader{0, uint64(rep.ContentLength), rep.Body},
-		Writer: nil,
-		Closer: rep.Body,
-	}
-	defer f.Close()
+	defer rep.Body.Close()
+	f := io.TeeReader(rep.Body, pretty.NewProgressWriter(rep.ContentLength))
 	r := map[string][]*net.IPNet{}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
