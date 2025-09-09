@@ -1,8 +1,2 @@
-github.com/libraries/go v1.0.0 h1:haBcspBOvFO3J52zzRJP/6UV12WqOclxf6x1fEAWuBg=
-github.com/libraries/go v1.0.0/go.mod h1:gDswTQfQ6h3VYCnUvrPEOPsRWYpDiNhO4ervTpYi41c=
-github.com/libraries/go v1.0.1 h1:BMwbQzwht9N8dr56HigeJzTFQsffde2+WT+CzXL3NKw=
-github.com/libraries/go v1.0.1/go.mod h1:gDswTQfQ6h3VYCnUvrPEOPsRWYpDiNhO4ervTpYi41c=
-github.com/libraries/go v1.0.3 h1:9akN9Ue5eO/x5dOrsoNFPdk6/a6SCcs3aK4k8FoAGeg=
-github.com/libraries/go v1.0.3/go.mod h1:gDswTQfQ6h3VYCnUvrPEOPsRWYpDiNhO4ervTpYi41c=
-github.com/libraries/go v1.0.4 h1:ajy5Alxarb9vde9OwTMKqcvfFuVlYtWXcLjyKorWKQc=
-github.com/libraries/go v1.0.4/go.mod h1:gDswTQfQ6h3VYCnUvrPEOPsRWYpDiNhO4ervTpYi41c=
+github.com/libraries/go v1.0.5 h1:qmq3/0vR5XRaO+/BRTv+yDZQtfMfvoNkjRqqdzHvo0Y=
+github.com/libraries/go v1.0.5/go.mod h1:gDswTQfQ6h3VYCnUvrPEOPsRWYpDiNhO4ervTpYi41c=
