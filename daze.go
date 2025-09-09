@@ -27,10 +27,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/libraries/go/doa"
-	"github.com/libraries/go/lru"
-	"github.com/libraries/go/pretty"
-	"github.com/libraries/go/rate"
+	"github.com/libraries/daze/lib/doa"
+	"github.com/libraries/daze/lib/lru"
+	"github.com/libraries/daze/lib/pretty"
+	"github.com/libraries/daze/lib/rate"
 )
 
 // ============================================================================
@@ -1209,7 +1209,7 @@ func LoadApnic() map[string][]*net.IPNet {
 	log.Println("main: load apnic data from", url)
 	rep := doa.Try(http.Get(url))
 	defer rep.Body.Close()
-	f := io.TeeReader(rep.Body, pretty.NewProgressWriter(rep.ContentLength))
+	f := io.TeeReader(rep.Body, pretty.NewProgressWriter(uint64(rep.ContentLength)))
 	r := map[string][]*net.IPNet{}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
