@@ -168,7 +168,7 @@ func ResolverDoh(addr string) *net.Resolver {
 	}
 }
 
-// ResolverDot returns a DoT resolver. Depending on the addr entered, the dns, dot or doh protocol will be used
+// ResolverAny returns a dns resolver. Depending on the addr entered, the dns, dot or doh protocol will be used
 // automatically.
 //
 // Dns: 1.1.1.1:53
