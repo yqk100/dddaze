@@ -61,7 +61,7 @@ func main() {
 	// If daze runs in Android through termux, then we set a default dns for it. See:
 	// https://stackoverflow.com/questions/38959067/dns-lookup-issue-when-running-my-go-app-in-termux
 	if os.Getenv("ANDROID_ROOT") != "" {
-		net.DefaultResolver = daze.ResolverDns("1.1.1.1:53")
+		net.DefaultResolver = daze.ResolverDns(daze.ResolverPublic.Cloudflare.Dns)
 	}
 	// Remove cmdline and memstats from expvar default exports.
 	// See: https://github.com/golang/go/issues/29105

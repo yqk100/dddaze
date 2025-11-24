@@ -1261,6 +1261,46 @@ func LoadReservedIP() []*net.IPNet {
 	return r
 }
 
+// ResolverPublicConfig holds public DNS resolver addresses.
+type ResolverPublicConfig struct {
+	Dns string
+	Dot string
+	Doh string
+}
+
+// ResolverPublic holds some well-known public DNS resolvers.
+var ResolverPublic = struct {
+	Alidns     ResolverPublicConfig
+	Cloudflare ResolverPublicConfig
+	Google     ResolverPublicConfig
+	Tencent    ResolverPublicConfig
+}{
+	// See: https://www.alidns.com/
+	Alidns: ResolverPublicConfig{
+		Dns: "223.5.5.5:53",
+		Dot: "223.5.5.5:853",
+		Doh: "https://223.5.5.5/dns-query",
+	},
+	// See: https://www.cloudflare.com/learning/dns/what-is-1.1.1.1/
+	Cloudflare: ResolverPublicConfig{
+		Dns: "1.1.1.1:53",
+		Dot: "1.1.1.1:853",
+		Doh: "https://1.1.1.1/dns-query",
+	},
+	// See: https://developers.google.com/speed/public-dns
+	Google: ResolverPublicConfig{
+		Dns: "8.8.8.8:53",
+		Dot: "8.8.8.8:853",
+		Doh: "https://8.8.8.8/dns-query",
+	},
+	// See: https://cloud.tencent.com/document/product/302/110786
+	Tencent: ResolverPublicConfig{
+		Dns: "119.29.29.29:53",
+		Dot: "1.12.12.12:853",
+		Doh: "https://1.12.12.12/dns-query",
+	},
+}
+
 // ============================================================================
 //              ___           ___           ___           ___
 //             /\  \         /\  \         /\  \         /\  \

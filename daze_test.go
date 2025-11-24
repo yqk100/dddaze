@@ -64,7 +64,7 @@ func TestLocaleSocks5(t *testing.T) {
 }
 
 func TestResolverDns(t *testing.T) {
-	dns := ResolverDns("1.1.1.1:53")
+	dns := ResolverDns(ResolverPublic.Cloudflare.Dns)
 	_, err := dns.LookupHost(context.Background(), HostLookup)
 	if err != nil {
 		t.FailNow()
@@ -72,7 +72,7 @@ func TestResolverDns(t *testing.T) {
 }
 
 func TestResolverDot(t *testing.T) {
-	dot := ResolverDot("1.1.1.1:853")
+	dot := ResolverDot(ResolverPublic.Cloudflare.Dot)
 	_, err := dot.LookupHost(context.Background(), HostLookup)
 	if err != nil {
 		t.FailNow()
@@ -80,9 +80,32 @@ func TestResolverDot(t *testing.T) {
 }
 
 func TestResolverDoh(t *testing.T) {
-	doh := ResolverDoh("https://1.1.1.1/dns-query")
+	doh := ResolverDoh(ResolverPublic.Cloudflare.Doh)
 	_, err := doh.LookupHost(context.Background(), HostLookup)
 	if err != nil {
 		t.FailNow()
+	}
+}
+
+func TestResolverAll(t *testing.T) {
+	for _, url := range []string{
+		ResolverPublic.Alidns.Dns,
+		ResolverPublic.Alidns.Dot,
+		ResolverPublic.Alidns.Doh,
+		ResolverPublic.Cloudflare.Dns,
+		ResolverPublic.Cloudflare.Dot,
+		ResolverPublic.Cloudflare.Doh,
+		ResolverPublic.Google.Dns,
+		ResolverPublic.Google.Dot,
+		ResolverPublic.Google.Doh,
+		ResolverPublic.Tencent.Dns,
+		ResolverPublic.Tencent.Dot,
+		ResolverPublic.Tencent.Doh,
+	} {
+		dns := ResolverAny(url)
+		_, err := dns.LookupHost(context.Background(), HostLookup)
+		if err != nil {
+			t.FailNow()
+		}
 	}
 }
