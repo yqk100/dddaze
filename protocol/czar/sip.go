@@ -40,6 +40,7 @@ func (s *Sip) Put(x uint8) {
 func (s *Sip) Set(x uint8) {
 	s.m.Lock()
 	defer s.m.Unlock()
+	doa.Doa(s.i.Bit(int(x)) == 0)
 	s.i = s.i.SetBit(s.i, int(x), 1)
 }
 
