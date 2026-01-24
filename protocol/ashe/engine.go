@@ -121,11 +121,11 @@ type Server struct {
 // Hello creates an encrypted channel.
 func (s *Server) Hello(cli io.ReadWriteCloser) (io.ReadWriteCloser, error) {
 	var (
-		buf     []byte
-		con     io.ReadWriteCloser
-		err     error
-		gap     int64
-		gapSign int64
+		buf []byte
+		con io.ReadWriteCloser
+		err error
+		gap int64
+		sig int64
 	)
 	buf = make([]byte, 32)
 	_, err = io.ReadFull(cli, buf)
@@ -145,8 +145,8 @@ func (s *Server) Hello(cli io.ReadWriteCloser) (io.ReadWriteCloser, error) {
 	// Get absolute value. Hacker's Delight, 2-4, Absolute Value Function.
 	// See https://doc.lagout.org/security/Hackers%20Delight.pdf
 	gap = time.Now().Unix() - int64(binary.BigEndian.Uint64(buf))
-	gapSign = gap >> 63
-	if gap^gapSign-gapSign > int64(Conf.LifeExpired) {
+	sig = gap >> 63
+	if gap^sig-sig > int64(Conf.LifeExpired) {
 		return nil, errors.New("daze: request expired")
 	}
 	Expv.ServerClockSkew.Add(float64(gap))
