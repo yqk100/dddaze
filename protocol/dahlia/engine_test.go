@@ -11,18 +11,18 @@ import (
 )
 
 const (
-	EchoServerListenOn = "127.0.0.1:28080"
+	DazeClientListenOn = "127.0.0.1:28080"
 	DazeServerListenOn = "127.0.0.1:28081"
-	DazeClientListenOn = "127.0.0.1:28082"
+	DazeTesterListenOn = "127.0.0.1:28082"
 	Password           = "password"
 )
 
 func TestProtocolDahliaTCP(t *testing.T) {
-	dazeRemote := daze.NewTester(EchoServerListenOn)
-	defer dazeRemote.Close()
-	dazeRemote.TCP()
+	DazeTester := daze.NewTester(DazeTesterListenOn)
+	defer DazeTester.Close()
+	DazeTester.TCP()
 
-	dazeServer := NewServer(DazeServerListenOn, EchoServerListenOn, Password)
+	dazeServer := NewServer(DazeServerListenOn, DazeTesterListenOn, Password)
 	defer dazeServer.Close()
 	dazeServer.Run()
 

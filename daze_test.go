@@ -10,47 +10,47 @@ import (
 )
 
 const (
-	DazeServerListenOn = "127.0.0.1:28080"
 	CurlDest           = "https://www.zhihu.com"
+	DazeLocaleListenOn = "127.0.0.1:28080"
 	HostLookup         = "google.com"
 )
 
 func TestLocaleHttp(t *testing.T) {
-	locale := NewLocale(DazeServerListenOn, &Direct{})
+	locale := NewLocale(DazeLocaleListenOn, &Direct{})
 	defer locale.Close()
 	locale.Run()
 
-	cmd := exec.Command("curl", "-x", "http://"+DazeServerListenOn, CurlDest)
+	cmd := exec.Command("curl", "-x", "http://"+DazeLocaleListenOn, CurlDest)
 	out := doa.Try(cmd.Output())
 	doa.Doa(bytes.Contains(out, []byte("zhihu")))
 }
 
 func TestLocaleSocks4(t *testing.T) {
-	locale := NewLocale(DazeServerListenOn, &Direct{})
+	locale := NewLocale(DazeLocaleListenOn, &Direct{})
 	defer locale.Close()
 	locale.Run()
 
-	cmd := exec.Command("curl", "-x", "socks4://"+DazeServerListenOn, CurlDest)
+	cmd := exec.Command("curl", "-x", "socks4://"+DazeLocaleListenOn, CurlDest)
 	out := doa.Try(cmd.Output())
 	doa.Doa(bytes.Contains(out, []byte("zhihu")))
 }
 
 func TestLocaleSocks4a(t *testing.T) {
-	locale := NewLocale(DazeServerListenOn, &Direct{})
+	locale := NewLocale(DazeLocaleListenOn, &Direct{})
 	defer locale.Close()
 	locale.Run()
 
-	cmd := exec.Command("curl", "-x", "socks4a://"+DazeServerListenOn, CurlDest)
+	cmd := exec.Command("curl", "-x", "socks4a://"+DazeLocaleListenOn, CurlDest)
 	out := doa.Try(cmd.Output())
 	doa.Doa(bytes.Contains(out, []byte("zhihu")))
 }
 
 func TestLocaleSocks5(t *testing.T) {
-	locale := NewLocale(DazeServerListenOn, &Direct{})
+	locale := NewLocale(DazeLocaleListenOn, &Direct{})
 	defer locale.Close()
 	locale.Run()
 
-	cmd := exec.Command("curl", "-x", "socks5://"+DazeServerListenOn, CurlDest)
+	cmd := exec.Command("curl", "-x", "socks5://"+DazeLocaleListenOn, CurlDest)
 	out := doa.Try(cmd.Output())
 	doa.Doa(bytes.Contains(out, []byte("zhihu")))
 }

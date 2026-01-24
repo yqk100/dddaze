@@ -14,11 +14,11 @@ import (
 )
 
 func TestProtocolCzarMux(t *testing.T) {
-	rmt := &Tester{daze.NewTester(EchoServerListenOn)}
+	rmt := &Tester{daze.NewTester(DazeTesterListenOn)}
 	rmt.Mux()
 	defer rmt.Close()
 
-	mux := NewMuxClient(doa.Try(net.Dial("tcp", EchoServerListenOn)))
+	mux := NewMuxClient(doa.Try(net.Dial("tcp", DazeTesterListenOn)))
 	defer mux.Close()
 	cli := doa.Try(mux.Open())
 	defer cli.Close()
@@ -62,11 +62,11 @@ func TestProtocolCzarMux(t *testing.T) {
 }
 
 func TestProtocolCzarMuxStreamClientClose(t *testing.T) {
-	rmt := &Tester{daze.NewTester(EchoServerListenOn)}
+	rmt := &Tester{daze.NewTester(DazeTesterListenOn)}
 	rmt.Mux()
 	defer rmt.Close()
 
-	mux := NewMuxClient(doa.Try(net.Dial("tcp", EchoServerListenOn)))
+	mux := NewMuxClient(doa.Try(net.Dial("tcp", DazeTesterListenOn)))
 	defer mux.Close()
 	cli := doa.Try(mux.Open())
 
@@ -77,11 +77,11 @@ func TestProtocolCzarMuxStreamClientClose(t *testing.T) {
 }
 
 func TestProtocolCzarMuxStreamServerClose(t *testing.T) {
-	rmt := Tester{daze.NewTester(EchoServerListenOn)}
+	rmt := Tester{daze.NewTester(DazeTesterListenOn)}
 	rmt.Mux()
 	defer rmt.Close()
 
-	mux := NewMuxClient(doa.Try(net.Dial("tcp", EchoServerListenOn)))
+	mux := NewMuxClient(doa.Try(net.Dial("tcp", DazeTesterListenOn)))
 	defer mux.Close()
 	cli := doa.Try(mux.Open())
 	defer cli.Close()
@@ -92,11 +92,11 @@ func TestProtocolCzarMuxStreamServerClose(t *testing.T) {
 }
 
 func TestProtocolCzarMuxStreamClientReuse(t *testing.T) {
-	rmt := &Tester{daze.NewTester(EchoServerListenOn)}
+	rmt := &Tester{daze.NewTester(DazeTesterListenOn)}
 	rmt.Mux()
 	defer rmt.Close()
 
-	mux := NewMuxClient(doa.Try(net.Dial("tcp", EchoServerListenOn)))
+	mux := NewMuxClient(doa.Try(net.Dial("tcp", DazeTesterListenOn)))
 	defer mux.Close()
 	buf := make([]byte, 0x8000)
 
@@ -121,11 +121,11 @@ func TestProtocolCzarMuxStreamClientReuse(t *testing.T) {
 }
 
 func TestProtocolCzarMuxClientClose(t *testing.T) {
-	rmt := &Tester{daze.NewTester(EchoServerListenOn)}
+	rmt := &Tester{daze.NewTester(DazeTesterListenOn)}
 	rmt.Mux()
 	defer rmt.Close()
 
-	mux := NewMuxClient(doa.Try(net.Dial("tcp", EchoServerListenOn)))
+	mux := NewMuxClient(doa.Try(net.Dial("tcp", DazeTesterListenOn)))
 	defer mux.Close()
 	cli := doa.Try(mux.Open())
 	defer cli.Close()
@@ -138,11 +138,11 @@ func TestProtocolCzarMuxClientClose(t *testing.T) {
 }
 
 func TestProtocolCzarMuxServerReopen(t *testing.T) {
-	rmt := &Tester{daze.NewTester(EchoServerListenOn)}
+	rmt := &Tester{daze.NewTester(DazeTesterListenOn)}
 	rmt.Mux()
 	defer rmt.Close()
 
-	cli := doa.Try(net.Dial("tcp", EchoServerListenOn))
+	cli := doa.Try(net.Dial("tcp", DazeTesterListenOn))
 	defer cli.Close()
 
 	cli.Write([]byte{0x00, 0x00, 0x00, 0x00})
