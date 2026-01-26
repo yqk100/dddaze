@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/libraries/daze/lib/doa"
+	"github.com/libraries/daze/lib/expvpp"
 	"github.com/libraries/daze/lib/lru"
 	"github.com/libraries/daze/lib/pretty"
 	"github.com/libraries/daze/lib/rate"
@@ -66,15 +67,15 @@ var Conf = struct {
 var Expv = struct {
 	RouterCacheCall *expvar.Int
 	RouterCacheHits *expvar.Int
-	RouterCacheRate expvar.Func
+	RouterCacheRate *expvar.Func
 	RouterIPNetCall *expvar.Int
-	RouterIPNetTime *ExpvarAverage
+	RouterIPNetTime *expvpp.Average
 }{
 	RouterCacheCall: expvar.NewInt("RouterCache.Call"),
 	RouterCacheHits: expvar.NewInt("RouterCache.Hits"),
-	RouterCacheRate: NewExpvarPercent("RouterCache.Rate", "RouterCache.Hits", "RouterCache.Call"),
+	RouterCacheRate: expvpp.NewPercent("RouterCache.Rate", "RouterCache.Hits", "RouterCache.Call"),
 	RouterIPNetCall: expvar.NewInt("RouterIPNet.Call"),
-	RouterIPNetTime: NewExpvarAverage("RouterIPNet.Time", 64),
+	RouterIPNetTime: expvpp.NewAverage("RouterIPNet.Time", 64),
 }
 
 // ResolverDns returns a DNS resolver.
@@ -763,7 +764,7 @@ func (r *RouterIPNet) Road(ctx *Context, host string) Road {
 		Expv.RouterIPNetCall.Add(1)
 		t := time.Now()
 		l, err := net.DefaultResolver.LookupIPAddr(context.Background(), host)
-		Expv.RouterIPNetTime.Add(time.Since(t).Seconds())
+		Expv.RouterIPNetTime.Append(time.Since(t).Seconds())
 		return l, err
 	}()
 	if err != nil {
@@ -1057,37 +1058,6 @@ func Dial(network string, address string) (net.Conn, error) {
 		Timeout: Conf.DialerTimeout,
 	}
 	return d.Dial(network, address)
-}
-
-// ExpvarAverage is a structure to maintain a running average using expvar.Float.
-type ExpvarAverage struct {
-	F *expvar.Float
-	L float64
-}
-
-// Adds a new value to the running average. This is not strictly concurrency-safe, but it won't have much impact on the
-// data.
-func (e *ExpvarAverage) Add(value float64) {
-	e.F.Add((value - e.F.Value()) / e.L)
-}
-
-// NewExpvarAverage creates and initializes a new ExpvarAverage instance.
-func NewExpvarAverage(name string, length int) *ExpvarAverage {
-	return &ExpvarAverage{
-		F: expvar.NewFloat(name),
-		L: float64(length),
-	}
-}
-
-// NewExpvarPercent creates a new expvar.Func that calculates the ratio of two expvar.Int or expvar.Float metrics.
-func NewExpvarPercent(name string, n string, d string) expvar.Func {
-	f := expvar.Func(func() any {
-		v := doa.Try(strconv.ParseFloat(expvar.Get(n).String(), 64))
-		w := doa.Try(strconv.ParseFloat(expvar.Get(d).String(), 64))
-		return float64(v) / float64(max(1, w))
-	})
-	expvar.Publish(name, f)
-	return f
 }
 
 // GravityReader wraps an io.Reader with RC4 crypto.
