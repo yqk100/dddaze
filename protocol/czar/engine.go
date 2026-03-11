@@ -50,8 +50,6 @@ import (
 
 // Conf is acting as package level configuration.
 var Conf = struct {
-	// The newly created stream has a higher write priority.
-	FastWriteDuration time.Duration
 	// The duration a connection needs to be idle before mux begins sending out keep-alive probe.
 	IdleProbeDuration time.Duration
 	// If no data is read for more than this time, the connection is closed.
@@ -61,7 +59,6 @@ var Conf = struct {
 	// will be reduced.
 	PacketSize int
 }{
-	FastWriteDuration: time.Second * 16,
 	IdleProbeDuration: time.Second * 32,
 	IdleReplyDuration: time.Second * 48,
 	PacketSize:        2048,
