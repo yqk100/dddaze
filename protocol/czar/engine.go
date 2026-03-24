@@ -27,25 +27,25 @@ import (
 // To open a stream:
 //
 // +-----+-----+-----+-----+
-// | Sid |  0  |    Rsv    |
+// |  0  | Sid |    Rsv    |
 // +-----+-----+-----+-----+
 //
 // Both server and client can push data to each other.
 //
 // +-----+-----+-----+-----+-----+-----+
-// | Sid |  1  |    Len    |    Msg    |
+// |  1  | Sid |    Len    |    Msg    |
 // +-----+-----+-----+-----+-----+-----+
 //
 // Close the specified stream.
 //
 // +-----+-----+-----+-----+
-// | Sid |  2  | 0/1 | Rsv |
+// |  2  | Sid | 0/1 | Rsv |
 // +-----+-----+-----+-----+
 //
 // Keep alive probe and reply.
 //
 // +-----+-----+-----+-----+
-// | 0x0 |  3  | 0/1 | Rsv |
+// |  3  | 0/1 |    Rsv    |
 // +-----+-----+-----+-----+
 
 // Conf is acting as package level configuration.

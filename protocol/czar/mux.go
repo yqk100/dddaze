@@ -28,7 +28,7 @@ func (s *Stream) Close() error {
 	s.wer.Put(io.ErrClosedPipe)
 	s.zo0.Do(func() {
 		s.mux.pri.Pri(0, func() error {
-			s.mux.con.Write([]byte{s.idx, 0x02, 0x00, 0x00})
+			s.mux.con.Write([]byte{0x02, s.idx, 0x00, 0x00})
 			return nil
 		})
 	})
@@ -41,7 +41,7 @@ func (s *Stream) Esolc() error {
 	s.wer.Put(io.ErrClosedPipe)
 	s.zo0.Do(func() {
 		s.mux.pri.Pri(0, func() error {
-			s.mux.con.Write([]byte{s.idx, 0x02, 0x01, 0x00})
+			s.mux.con.Write([]byte{0x02, s.idx, 0x01, 0x00})
 			return nil
 		})
 	})
@@ -98,8 +98,8 @@ func (s *Stream) Write(p []byte) (int, error) {
 		case len(p) >= 0:
 			return n, nil
 		}
-		buf[0] = s.idx
-		buf[1] = 0x01
+		buf[0] = 0x01
+		buf[1] = s.idx
 		binary.BigEndian.PutUint16(buf[2:4], uint16(l))
 		copy(buf[4:], p[:l])
 		p = p[l:]
@@ -177,7 +177,7 @@ func (m *Mux) Open() (*Stream, error) {
 		return nil, err
 	}
 	err = m.pri.Pri(0, func() error {
-		return doa.Err(m.con.Write([]byte{idx, 0x00, 0x00, 0x00}))
+		return doa.Err(m.con.Write([]byte{0x00, idx, 0x00, 0x00}))
 	})
 	if err != nil {
 		m.idp.Put(idx)
@@ -200,7 +200,7 @@ func (m *Mux) Recv() {
 		old *Stream
 		prb = time.AfterFunc(Conf.IdleProbeDuration, func() {
 			if m.pri.Pri(0, func() error {
-				return doa.Err(m.con.Write([]byte{0x00, 0x03, 0x00, 0x00}))
+				return doa.Err(m.con.Write([]byte{0x03, 0x00, 0x00, 0x00}))
 			}) != nil {
 				m.Close()
 			}
@@ -218,10 +218,15 @@ func (m *Mux) Recv() {
 			m.rer.Put(err)
 			break
 		}
-		idx = buf[0]
-		cmd = buf[1]
-		switch {
-		case cmd == 0x00:
+		cmd = buf[0]
+		idx = buf[1]
+		if cmd >= 0x04 {
+			// Packet format error, connection closed.
+			m.con.Close()
+			break
+		}
+		switch cmd {
+		case 0x00:
 			// Make sure the stream has been closed properly.
 			old = m.usb[idx]
 			if old.rer.Get() == nil || old.wer.Get() == nil {
@@ -232,7 +237,7 @@ func (m *Mux) Recv() {
 			m.idp.Set(idx)
 			m.usb[idx] = stm
 			m.ach <- stm
-		case cmd == 0x01:
+		case 0x01:
 			bsz = binary.BigEndian.Uint16(buf[2:4])
 			msg = make([]byte, bsz)
 			_, err = io.ReadFull(m.con, msg)
@@ -248,22 +253,19 @@ func (m *Mux) Recv() {
 			case stm.rch <- msg:
 			case <-stm.rer.Sig():
 			}
-		case cmd == 0x02:
+		case 0x02:
 			stm = m.usb[idx]
 			stm.Esolc()
 			old = NewWither(idx, m)
 			m.usb[idx] = old
-		case cmd == 0x03:
-			switch buf[2] {
+		case 0x03:
+			switch idx {
 			case 0x00:
 				m.pri.Pri(0, func() error {
-					return doa.Err(m.con.Write([]byte{0x00, 0x03, 0x01, 0x00}))
+					return doa.Err(m.con.Write([]byte{0x03, 0x01, 0x00, 0x00}))
 				})
 			case 0x01:
 			}
-		case cmd >= 0x04:
-			// Packet format error, connection closed.
-			m.con.Close()
 		}
 	}
 	close(m.ach)
