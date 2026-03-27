@@ -145,8 +145,11 @@ func TestProtocolCzarMuxServerReopen(t *testing.T) {
 	cli := doa.Try(net.Dial("tcp", DazeTesterListenOn))
 	defer cli.Close()
 
-	cli.Write([]byte{0x00, 0x00, 0x00, 0x00})
-	cli.Write([]byte{0x00, 0x00, 0x00, 0x00})
+	mph := make([]byte, 4)
+	mph[0] = 0x00 // Cmd open stream
+	mph[1] = 0x00 // Sid
+	cli.Write(mph)
+	cli.Write(mph)
 	buf := make([]byte, 1)
 	doa.Doa(doa.Err(io.ReadFull(cli, buf[:1])) != nil)
 }

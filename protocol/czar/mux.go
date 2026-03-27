@@ -28,7 +28,11 @@ func (s *Stream) Close() error {
 	s.wer.Put(io.ErrClosedPipe)
 	s.zo0.Do(func() {
 		s.mux.pri.Pri(0, func() error {
-			s.mux.con.Write([]byte{0x02, s.idx, 0x00, 0x00})
+			mph := make([]byte, 4)
+			mph[0] = 0x02
+			mph[1] = s.idx
+			mph[2] = 0x00
+			s.mux.con.Write(mph)
 			return nil
 		})
 	})
@@ -41,7 +45,11 @@ func (s *Stream) Esolc() error {
 	s.wer.Put(io.ErrClosedPipe)
 	s.zo0.Do(func() {
 		s.mux.pri.Pri(0, func() error {
-			s.mux.con.Write([]byte{0x02, s.idx, 0x01, 0x00})
+			mph := make([]byte, 4)
+			mph[0] = 0x02
+			mph[1] = s.idx
+			mph[2] = 0x01
+			s.mux.con.Write(mph)
 			return nil
 		})
 	})
@@ -177,7 +185,10 @@ func (m *Mux) Open() (*Stream, error) {
 		return nil, err
 	}
 	err = m.pri.Pri(0, func() error {
-		return doa.Err(m.con.Write([]byte{0x00, idx, 0x00, 0x00}))
+		mph := make([]byte, 4)
+		mph[0] = 0x00
+		mph[1] = idx
+		return doa.Err(m.con.Write(mph))
 	})
 	if err != nil {
 		m.idp.Put(idx)
@@ -200,7 +211,10 @@ func (m *Mux) Recv() {
 		old *Stream
 		prb = time.AfterFunc(Conf.IdleProbeDuration, func() {
 			if m.pri.Pri(0, func() error {
-				return doa.Err(m.con.Write([]byte{0x03, 0x00, 0x00, 0x00}))
+				mph := make([]byte, 4)
+				mph[0] = 0x03
+				mph[1] = 0x00
+				return doa.Err(m.con.Write(mph))
 			}) != nil {
 				m.Close()
 			}
@@ -262,7 +276,10 @@ func (m *Mux) Recv() {
 			switch idx {
 			case 0x00:
 				m.pri.Pri(0, func() error {
-					return doa.Err(m.con.Write([]byte{0x03, 0x01, 0x00, 0x00}))
+					mph := make([]byte, 4)
+					mph[0] = 0x03
+					mph[1] = 0x01
+					return doa.Err(m.con.Write(mph))
 				})
 			case 0x01:
 			}
