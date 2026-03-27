@@ -296,7 +296,7 @@ func NewMux(conn io.ReadWriteCloser) *Mux {
 		idp: NewSip(),
 		pri: priority.NewPriority(2),
 		rer: NewErr(),
-		usb: make([]*Stream, 256),
+		usb: make([]*Stream, Conf.StreamPool),
 	}
 	return mux
 }
@@ -304,7 +304,7 @@ func NewMux(conn io.ReadWriteCloser) *Mux {
 // NewMuxServer returns a new MuxServer.
 func NewMuxServer(conn io.ReadWriteCloser) *Mux {
 	mux := NewMux(conn)
-	for i := range 256 {
+	for i := range Conf.StreamPool {
 		mux.usb[i] = NewWither(uint8(i), mux)
 	}
 	go mux.Recv()

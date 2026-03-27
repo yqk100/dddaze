@@ -58,10 +58,12 @@ var Conf = struct {
 	// small, the transmission efficiency will be reduced, and if it is too large, the concurrency capability of mux
 	// will be reduced.
 	PacketSize int
+	StreamPool int
 }{
 	IdleProbeDuration: time.Second * 32,
 	IdleReplyDuration: time.Second * 48,
 	PacketSize:        2048,
+	StreamPool:        256,
 }
 
 // Server implemented the czar protocol.

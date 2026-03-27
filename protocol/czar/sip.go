@@ -20,11 +20,11 @@ func (s *Sip) Get() (uint8, error) {
 	s.m.Lock()
 	defer s.m.Unlock()
 	n := big.NewInt(0).Not(s.i)
-	m := n.TrailingZeroBits()
-	if m == 256 {
+	m := int(n.TrailingZeroBits())
+	if m == Conf.StreamPool {
 		return 0, errors.New("daze: out of stream")
 	}
-	s.i.SetBit(s.i, int(m), 1)
+	s.i.SetBit(s.i, m, 1)
 	return uint8(m), nil
 }
 
