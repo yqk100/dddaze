@@ -253,6 +253,10 @@ func (m *Mux) Recv() {
 			m.ach <- stm
 		case 0x01:
 			bsz = binary.BigEndian.Uint16(buf[2:4])
+			if int(bsz) > Conf.PacketSize-4 {
+				m.con.Close()
+				break
+			}
 			msg = make([]byte, bsz)
 			_, err = io.ReadFull(m.con, msg)
 			if err != nil {

@@ -24,28 +24,17 @@ import (
 // Client port: d.com ----------┘ |                   | └---------- Server port: d.com
 // Client port: e.com ------------┘                   └------------ Server port: e.com
 //
-// To open a stream:
+// The czar protocol is designed to be simple and efficient. The packet header is only 4 bytes, which is enough to
+// identify the stream and the length of the message.
 //
 // +-----+-----+-----+-----+
 // | 0x0 | Sid |    Rsv    |
-// +-----+-----+-----+-----+
-//
-// Both server and client can push data to each other.
-//
 // +-----+-----+-----+-----+-----+-----+
 // | 0x1 | Sid |    Len    |    Msg    |
 // +-----+-----+-----+-----+-----+-----+
-//
-// Close the specified stream.
-//
+// | 0x2 | Sid | Ask | Rsv |
 // +-----+-----+-----+-----+
-// | 0x2 | Sid | 0/1 | Rsv |
-// +-----+-----+-----+-----+
-//
-// Keep alive probe and reply.
-//
-// +-----+-----+-----+-----+
-// | 0x3 | 0/1 |    Rsv    |
+// | 0x3 | Ask |    Rsv    |
 // +-----+-----+-----+-----+
 
 // Conf is acting as package level configuration.
