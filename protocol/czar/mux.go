@@ -234,11 +234,6 @@ func (m *Mux) Recv() {
 		}
 		cmd = buf[0]
 		idx = buf[1]
-		if cmd >= 0x04 {
-			// Packet format error, connection closed.
-			m.con.Close()
-			break
-		}
 		switch cmd {
 		case 0x00:
 			// Make sure the stream has been closed properly.
