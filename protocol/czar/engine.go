@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/libraries/daze"
+	"github.com/libraries/daze/lib/expvpp"
 	"github.com/libraries/daze/lib/rate"
 	"github.com/libraries/daze/protocol/ashe"
 )
@@ -53,6 +54,13 @@ var Conf = struct {
 	IdleReplyDuration: time.Second * 48,
 	PacketSize:        2048,
 	StreamPool:        256,
+}
+
+// Expv is a simple wrapper around the expvars package.
+var Expv = struct {
+	StreamWriteSize *expvpp.Average
+}{
+	StreamWriteSize: expvpp.NewAverage("Protocol.Czar.Stream.WriteSize", 64),
 }
 
 // Server implemented the czar protocol.
