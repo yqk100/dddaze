@@ -1,6 +1,7 @@
 package czar
 
 import (
+	"cmp"
 	"encoding/binary"
 	"io"
 	"sync"
@@ -12,6 +13,7 @@ import (
 
 // A Stream managed by the multiplexer.
 type Stream struct {
+	cat time.Time
 	idx uint8
 	mux *Mux
 	rbf []byte
@@ -95,6 +97,7 @@ func (s *Stream) Write(p []byte) (int, error) {
 		buf []byte
 		l   = 0
 		n   = 0
+		z   = 0
 	)
 	for {
 		switch {
@@ -112,7 +115,10 @@ func (s *Stream) Write(p []byte) (int, error) {
 		binary.BigEndian.PutUint16(buf[2:4], uint16(l))
 		copy(buf[4:], p[:l])
 		p = p[l:]
-		err := s.mux.pri.Pri(1, func() error {
+		z = 2 - max(cmp.Compare(Conf.FastWriteDuration, time.Since(s.cat)), 0)
+		doa.Doa(z >= 1)
+		doa.Doa(z <= 2)
+		err := s.mux.pri.Pri(z, func() error {
 			if err := s.wer.Get(); err != nil {
 				return err
 			}
@@ -133,6 +139,7 @@ func (s *Stream) Write(p []byte) (int, error) {
 // NewStream returns a new Stream.
 func NewStream(idx uint8, mux *Mux) *Stream {
 	return &Stream{
+		cat: time.Now(),
 		idx: idx,
 		mux: mux,
 		rbf: make([]byte, 0),
@@ -290,7 +297,7 @@ func NewMux(conn io.ReadWriteCloser) *Mux {
 		ach: make(chan *Stream),
 		con: conn,
 		idp: NewSip(),
-		pri: priority.NewPriority(2),
+		pri: priority.NewPriority(3),
 		rer: NewErr(),
 		usb: make([]*Stream, Conf.StreamPool),
 	}
