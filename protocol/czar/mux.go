@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/libraries/daze/lib/doa"
+	"github.com/libraries/daze/lib/once"
 	"github.com/libraries/daze/lib/priority"
 )
 
@@ -18,8 +19,8 @@ type Stream struct {
 	mux *Mux
 	rbf []byte
 	rch chan []byte
-	rer *Err
-	wer *Err
+	rer *once.OnceErr
+	wer *once.OnceErr
 	zo0 sync.Once
 	zo1 sync.Once
 }
@@ -144,8 +145,8 @@ func NewStream(idx uint8, mux *Mux) *Stream {
 		mux: mux,
 		rbf: make([]byte, 0),
 		rch: make(chan []byte, 32),
-		rer: NewErr(),
-		wer: NewErr(),
+		rer: once.NewOnceErr(),
+		wer: once.NewOnceErr(),
 		zo0: sync.Once{},
 		zo1: sync.Once{},
 	}
@@ -166,7 +167,7 @@ type Mux struct {
 	con io.ReadWriteCloser
 	idp *Sip
 	pri *priority.Priority
-	rer *Err
+	rer *once.OnceErr
 	usb []*Stream
 }
 
@@ -298,7 +299,7 @@ func NewMux(conn io.ReadWriteCloser) *Mux {
 		con: conn,
 		idp: NewSip(),
 		pri: priority.NewPriority(3),
-		rer: NewErr(),
+		rer: once.NewOnceErr(),
 		usb: make([]*Stream, Conf.StreamPool),
 	}
 	return mux
