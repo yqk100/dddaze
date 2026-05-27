@@ -1184,6 +1184,7 @@ func LoadApnic() map[string][]*net.IPNet {
 			r[seps[1]] = append(r[seps[1]], cidr)
 		}
 	}
+	doa.Nil(s.Err())
 	log.Println("main: load apnic done")
 	return r
 }
