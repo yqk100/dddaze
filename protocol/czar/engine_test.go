@@ -17,9 +17,9 @@ const (
 )
 
 func TestProtocolCzarTCP(t *testing.T) {
-	DazeTester := daze.NewTester(DazeTesterListenOn)
-	defer DazeTester.Close()
-	DazeTester.TCP()
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.TCP()
 
 	dazeServer := NewServer(DazeServerListenOn, Password)
 	defer dazeServer.Close()
@@ -70,9 +70,9 @@ func TestProtocolCzarTCP(t *testing.T) {
 }
 
 func TestProtocolCzarTCPClientClose(t *testing.T) {
-	DazeTester := daze.NewTester(DazeTesterListenOn)
-	defer DazeTester.Close()
-	DazeTester.TCP()
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.TCP()
 
 	dazeServer := NewServer(DazeServerListenOn, Password)
 	defer dazeServer.Close()
@@ -91,9 +91,9 @@ func TestProtocolCzarTCPClientClose(t *testing.T) {
 }
 
 func TestProtocolCzarTCPServerClose(t *testing.T) {
-	DazeTester := daze.NewTester(DazeTesterListenOn)
-	defer DazeTester.Close()
-	DazeTester.TCP()
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.TCP()
 
 	dazeServer := NewServer(DazeServerListenOn, Password)
 	defer dazeServer.Close()
@@ -111,9 +111,9 @@ func TestProtocolCzarTCPServerClose(t *testing.T) {
 }
 
 func TestProtocolCzarUDP(t *testing.T) {
-	DazeTester := daze.NewTester(DazeTesterListenOn)
-	defer DazeTester.Close()
-	DazeTester.UDP()
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.UDP()
 
 	dazeServer := NewServer(DazeServerListenOn, Password)
 	defer dazeServer.Close()

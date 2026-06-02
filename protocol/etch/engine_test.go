@@ -69,6 +69,47 @@ func TestProtocolEtchTCP(t *testing.T) {
 	}
 }
 
+func TestProtocolEtchTCPClientClose(t *testing.T) {
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.TCP()
+
+	dazeServer := NewServer(DazeServerListenOn, Password)
+	defer dazeServer.Close()
+	dazeServer.Run()
+
+	dazeClient := NewClient(DazeServerListenOn, Password)
+	defer dazeClient.Close()
+	ctx := &daze.Context{}
+	cli := doa.Try(dazeClient.Dial(ctx, "tcp", DazeTesterListenOn))
+	defer cli.Close()
+
+	cli.Close()
+	doa.Doa(doa.Err(cli.Write([]byte{0x02, 0x00, 0x00, 0x00})) != nil)
+	buf := make([]byte, 1)
+	doa.Doa(doa.Err(io.ReadFull(cli, buf[:1])) != nil)
+}
+
+func TestProtocolEtchTCPServerClose(t *testing.T) {
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.TCP()
+
+	dazeServer := NewServer(DazeServerListenOn, Password)
+	defer dazeServer.Close()
+	dazeServer.Run()
+
+	dazeClient := NewClient(DazeServerListenOn, Password)
+	defer dazeClient.Close()
+	ctx := &daze.Context{}
+	cli := doa.Try(dazeClient.Dial(ctx, "tcp", DazeTesterListenOn))
+	defer cli.Close()
+
+	doa.Try(cli.Write([]byte{0x02, 0x00, 0x00, 0x00}))
+	buf := make([]byte, 1)
+	doa.Doa(doa.Err(io.ReadFull(cli, buf[:1])) != nil)
+}
+
 func TestProtocolEtchUDP(t *testing.T) {
 	dazeTester := daze.NewTester(DazeTesterListenOn)
 	defer dazeTester.Close()

@@ -18,9 +18,9 @@ const (
 )
 
 func TestProtocolDahliaTCP(t *testing.T) {
-	DazeTester := daze.NewTester(DazeTesterListenOn)
-	defer DazeTester.Close()
-	DazeTester.TCP()
+	dazeTester := daze.NewTester(DazeTesterListenOn)
+	defer dazeTester.Close()
+	dazeTester.TCP()
 
 	dazeServer := NewServer(DazeServerListenOn, DazeTesterListenOn, Password)
 	defer dazeServer.Close()
