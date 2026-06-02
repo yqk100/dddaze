@@ -160,6 +160,7 @@ func NewServer(listen string, cipher string) *Server {
 // Client implemented the baboon protocol.
 type Client struct {
 	Cipher []byte
+	Limits *rate.Limits
 	Server string
 }
 
@@ -190,14 +191,21 @@ func (c *Client) Dial(ctx *daze.Context, network string, address string) (io.Rea
 	con, err := spy.Estab(ctx, srv, network, address)
 	if err != nil {
 		srv.Close()
+		return nil, err
 	}
-	return con, err
+	rtc := &daze.ReadWriteCloser{
+		Reader: io.TeeReader(con, rate.NewLimitsWriter(c.Limits)),
+		Writer: io.MultiWriter(con, rate.NewLimitsWriter(c.Limits)),
+		Closer: con,
+	}
+	return rtc, nil
 }
 
 // NewClient returns a new Client. Cipher is a password in string form, with no length limit.
 func NewClient(server string, cipher string) *Client {
 	return &Client{
 		Cipher: daze.Salt(cipher),
+		Limits: rate.NewLimits(math.MaxUint32, time.Second),
 		Server: server,
 	}
 }

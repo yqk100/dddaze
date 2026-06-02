@@ -31,7 +31,6 @@ import (
 	"github.com/libraries/daze/lib/expvpp"
 	"github.com/libraries/daze/lib/lru"
 	"github.com/libraries/daze/lib/pretty"
-	"github.com/libraries/daze/lib/rate"
 )
 
 // ============================================================================
@@ -233,7 +232,6 @@ func (d *Direct) Dial(ctx *Context, network string, address string) (io.ReadWrit
 type Locale struct {
 	Closer io.Closer
 	Dialer Dialer
-	Limits *rate.Limits
 	Listen string
 }
 
@@ -593,11 +591,6 @@ func (l *Locale) Serve(ctx *Context, cli io.ReadWriteCloser) error {
 		buf = make([]byte, 1)
 		err error
 	)
-	cli = &ReadWriteCloser{
-		Reader: io.TeeReader(cli, rate.NewLimitsWriter(l.Limits)),
-		Writer: io.MultiWriter(cli, rate.NewLimitsWriter(l.Limits)),
-		Closer: cli,
-	}
 	_, err = io.ReadFull(cli, buf)
 	if err != nil {
 		// There are some clients that will establish a link in advance without sending any messages so that they can
@@ -669,7 +662,6 @@ func (l *Locale) Run() error {
 func NewLocale(listen string, dialer Dialer) *Locale {
 	return &Locale{
 		Dialer: dialer,
-		Limits: rate.NewLimits(math.MaxUint32, time.Second),
 		Listen: listen,
 	}
 }

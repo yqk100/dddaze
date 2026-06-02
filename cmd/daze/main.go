@@ -162,39 +162,39 @@ func main() {
 		switch *flProtoc {
 		case "ashe":
 			client := ashe.NewClient(*flServer, *flCipher)
+			if *flLimits != "" {
+				client.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
+			}
 			locale := daze.NewLocale(*flListen, daze.NewAimbot(client, &daze.AimbotOption{
 				Type: *flFilter,
 				Rule: *flRulels,
 				Cidr: *flCidrls,
 			}))
-			if *flLimits != "" {
-				locale.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
-			}
 			defer locale.Close()
 			doa.Nil(locale.Run())
 		case "baboon":
 			client := baboon.NewClient(*flServer, *flCipher)
+			if *flLimits != "" {
+				client.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
+			}
 			locale := daze.NewLocale(*flListen, daze.NewAimbot(client, &daze.AimbotOption{
 				Type: *flFilter,
 				Rule: *flRulels,
 				Cidr: *flCidrls,
 			}))
-			if *flLimits != "" {
-				locale.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
-			}
 			defer locale.Close()
 			doa.Nil(locale.Run())
 		case "czar":
 			client := czar.NewClient(*flServer, *flCipher)
+			if *flLimits != "" {
+				client.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
+			}
 			defer client.Close()
 			locale := daze.NewLocale(*flListen, daze.NewAimbot(client, &daze.AimbotOption{
 				Type: *flFilter,
 				Rule: *flRulels,
 				Cidr: *flCidrls,
 			}))
-			if *flLimits != "" {
-				locale.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
-			}
 			defer locale.Close()
 			doa.Nil(locale.Run())
 		case "dahlia":
@@ -206,15 +206,15 @@ func main() {
 			doa.Nil(client.Run())
 		case "etch":
 			client := etch.NewClient(*flServer, *flCipher)
+			if *flLimits != "" {
+				client.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
+			}
 			defer client.Close()
 			locale := daze.NewLocale(*flListen, daze.NewAimbot(client, &daze.AimbotOption{
 				Type: *flFilter,
 				Rule: *flRulels,
 				Cidr: *flCidrls,
 			}))
-			if *flLimits != "" {
-				locale.Limits = rate.NewLimits(daze.SizeParser(*flLimits), time.Second)
-			}
 			defer locale.Close()
 			doa.Nil(locale.Run())
 		}

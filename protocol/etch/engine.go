@@ -178,6 +178,7 @@ func NewServer(listen string, cipher string) *Server {
 type Client struct {
 	Cipher []byte
 	EpQuic *quic.Endpoint
+	Limits *rate.Limits
 	Server string
 }
 
@@ -214,7 +215,12 @@ func (c *Client) Dial(ctx *daze.Context, network string, address string) (io.Rea
 		srv.Close()
 		return nil, err
 	}
-	return out, nil
+	rtc := &daze.ReadWriteCloser{
+		Reader: io.TeeReader(out, rate.NewLimitsWriter(c.Limits)),
+		Writer: io.MultiWriter(out, rate.NewLimitsWriter(c.Limits)),
+		Closer: out,
+	}
+	return rtc, nil
 }
 
 // NewClient returns a new Client. Cipher is a password in string form, with no length limit.
@@ -222,6 +228,7 @@ func NewClient(server string, cipher string) *Client {
 	return &Client{
 		Cipher: daze.Salt(cipher),
 		EpQuic: doa.Try(quic.Listen("udp", ":0", ClientConfig.Do())),
+		Limits: rate.NewLimits(math.MaxUint32, time.Second),
 		Server: server,
 	}
 }
