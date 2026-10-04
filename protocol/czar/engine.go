@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"net"
+	"sync/atomic"
 	"time"
 
 	"github.com/libraries/daze"
@@ -114,8 +115,8 @@ func (s *Server) Run() error {
 			go func() {
 				defer mux.Close()
 				for con := range mux.Accept() {
-					idx++
-					ctx := &daze.Context{Cid: idx}
+					cid := atomic.AddUint32(&idx, 1)
+					ctx := &daze.Context{Cid: cid}
 					log.Printf("conn: %08x accept remote=%s", ctx.Cid, cli.RemoteAddr())
 					go func() {
 						defer con.Close()
