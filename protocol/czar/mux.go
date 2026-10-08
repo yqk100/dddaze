@@ -256,7 +256,7 @@ func (m *Mux) Recv() {
 				break
 			}
 			stm = NewStream(idx, m)
-			m.idp.Set(idx)
+			m.idp.Del(idx)
 			m.usb[idx] = stm
 			m.ach <- stm
 		case 0x01:
