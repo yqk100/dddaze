@@ -58,6 +58,7 @@ func (s *Stream) Esolc() error {
 		})
 	})
 	s.zo1.Do(func() {
+		s.mux.usb[s.idx] = NewWither(s.idx, s.mux)
 		s.mux.idp.Put(s.idx)
 	})
 	return nil
@@ -285,8 +286,6 @@ func (m *Mux) Recv() {
 			idx = binary.BigEndian.Uint16(buf[2:4]) % uint16(len(m.usb))
 			stm = m.usb[idx]
 			stm.Esolc()
-			old = NewWither(idx, m)
-			m.usb[idx] = old
 		case 0x03:
 			switch buf[1] {
 			case 0x00:
